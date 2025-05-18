@@ -1,6 +1,8 @@
 # Prerequisites
 *.d
-
+index.html
+test.c
+c2wasm.c
 # Object files
 *.o
 *.ko

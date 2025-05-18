@@ -50,7 +50,7 @@ typedef c2wasm_js_var ReactRoot;
 
 c2wasm_js_var React;
 c2wasm_js_var ReactDOM;
-#define ReactNULL  c2wasm_null;
+#define ReactNULL  c2wasm_null
 // the react fragment object, its the real object while the string its a pointer to indentify it
 c2wasm_js_var private_ReactFragment_object;
 const char *ReactFragment = "";

@@ -66,3 +66,16 @@ ReactElement private_ReactCreateFragment(c2wasm_js_var sentinel,...){
     va_end(args);
     return element;
 }
+
+c2wasm_js_var ReactGetElementById(const char *id){
+    c2wasm_js_var arguments = c2wasm_create_array();
+    c2wasm_append_array_string(arguments,id);
+    return c2wasm_call_object_prop(c2wasm_document,"getElementById",arguments);
+}
+
+void ReactDomRender(c2wasm_js_var element, c2wasm_js_var container){
+    c2wasm_js_var arguments = c2wasm_create_array();
+    c2wasm_append_array_any(arguments,element);
+    c2wasm_append_array_any(arguments,container);
+    c2wasm_call_object_prop(React,"render",arguments);
+}

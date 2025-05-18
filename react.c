@@ -21,6 +21,7 @@ c2wasm_js_var React;
 void ReactStart();
 
 void ReactStart(){
+    c2wasm_start();
     React = c2wasm_get_object_prop_any(c2wasm_window,"React");
     ReactFragment = c2wasm_get_object_prop_any(React,"Fragment");    
 }

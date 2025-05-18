@@ -53,7 +53,8 @@ c2wasm_js_var ReactFragment;
 c2wasm_js_var React;
 c2wasm_js_var ReactDOM;
 
-#define ReactCreateElement(...) private_ReactcreateElement(__VA_ARGS__,-1)
+
+#define ReactCreateElement(element,...) private_ReactcreateElement(element,__VA_ARGS__,-1)
 
 //================================Definitions==================================
 
@@ -65,7 +66,7 @@ void ReactStart(){
     ReactFragment = c2wasm_get_object_prop_any(React,"Fragment");    
 }
 
-ReactElement private_ReactcreateElement_raw(c2wasm_js_var element,va_list args){
+ReactElement private_ReactcreateElement_by_varg(c2wasm_js_var element,va_list args){
     
     c2wasm_js_var arguments = c2wasm_create_array();
     c2wasm_append_array_any(arguments,element);
@@ -78,14 +79,34 @@ ReactElement private_ReactcreateElement_raw(c2wasm_js_var element,va_list args){
         c2wasm_append_array_any(arguments,arg);
     }
     ReactElement created_element = c2wasm_call_object_prop(React,"createElement",arguments);
-   
 
     return created_element;
 }
+
+
+ReactElement private_ReactcreateElement_raw(c2wasm_js_var element,...){
+
+    va_list args;
+    va_start(args, element);
+    c2wasm_js_var arguments = c2wasm_create_array();
+    c2wasm_append_array_any(arguments,element);
+
+    while(1){
+        c2wasm_js_var arg = va_arg(args, c2wasm_js_var);
+        if(arg == -1){
+            break;
+        }
+        c2wasm_append_array_any(arguments,arg);
+    }
+    ReactElement created_element = c2wasm_call_object_prop(React,"createElement",arguments);
+    va_end(args);
+    return created_element;
+}
+
 ReactElement private_ReactcreateElement(const char *element,...){
     va_list args;
     va_start(args, element);
-    ReactElement created_element = private_ReactcreateElement_raw(c2wasm_create_string(element),args);
+    ReactElement created_element = private_ReactcreateElement_by_varg(c2wasm_create_string(element),args);
     va_end(args);
     return created_element;
 }
@@ -93,7 +114,7 @@ ReactElement private_ReactcreateElement(const char *element,...){
 ReactElement private_ReactCreateFragment(c2wasm_js_var sentinel,...){
     va_list args;
     va_start(args, sentinel);
-    ReactElement element = private_ReactcreateElement_raw(ReactFragment,args);
+    ReactElement element = private_ReactcreateElement_by_varg(ReactFragment,args);
     va_end(args);
     return element;
 }

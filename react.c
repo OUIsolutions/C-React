@@ -64,6 +64,30 @@ const char *ReactFragment = "";
 #define ReactCreateClojure(...) private_ReacteCreateFunction(__VA_ARGS__,-1)
 
 
+void ReactStart();
+
+
+ReactElement private_ReactcreateElement(const char *element,...);
+
+ReactElement private_ReactcreateFragment(c2wasm_js_var sentinel,...);
+
+c2wasm_js_var private_ReactCreateProps(void *sentinel,...);
+
+c2wasm_js_var ReactGetElementById(const char *id);
+
+c2wasm_js_var ReactGetElementByClassName(const char *className);
+
+
+c2wasm_js_var ReactCreateString(const char *string);
+
+c2wasm_js_var private_ReacteCreateFunction(c2wasm_js_var (*callback)(c2wasm_js_var args),...);
+
+c2wasm_js_var ReactCreateNumber(double number);
+
+ReactRoot ReactDOMCreateRoot(c2wasm_js_var element);
+
+void ReactRootRender(ReactRoot root,c2wasm_js_var element);
+
 //================================Definiprivate_ReactcreatePropstions==================================
 
 void ReactStart(){

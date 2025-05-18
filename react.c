@@ -9,11 +9,13 @@ $$ |  $$\   $$ |  $$ |$$   ____|$$  __$$ |$$ |        $$ |$$\
  \______/   \__|  \__| \_______| \_______| \_______|   \____/ 
                                                               
 */
+#include <stdarg.h>
+
+
 #ifndef c2wasm_fdefine
 #include "c2wasm.c"
 #endif 
 
-#include <stdarg.h>
 
 typedef c2wasm_js_var ReactComponent;
 typedef c2wasm_js_var ReactElement;

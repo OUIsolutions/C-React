@@ -49,9 +49,10 @@ typedef c2wasm_js_var ReactComponent;
 typedef c2wasm_js_var ReactElement;
 typedef c2wasm_js_var ReactRoot;
 
-c2wasm_js_var private_ReactFragment;
 c2wasm_js_var React;
 c2wasm_js_var ReactDOM;
+// the react fragment object, its the real object while the string its a pointer to indentify it
+c2wasm_js_var private_ReactFragment_object;
 const char *ReactFragment = "";
 
 
@@ -64,7 +65,7 @@ void ReactStart(){
     React = c2wasm_get_object_prop_any(c2wasm_window,"React");
     ReactDOM = c2wasm_get_object_prop_any(c2wasm_window,"ReactDOM");
 
-    private_ReactFragment = c2wasm_get_object_prop_any(React,"Fragment");    
+    private_ReactFragment_object = c2wasm_get_object_prop_any(React,"Fragment");    
 }
 
 ReactElement private_ReactcreateElement_by_varg(c2wasm_js_var element,va_list args){
@@ -88,7 +89,14 @@ ReactElement private_ReactcreateElement_by_varg(c2wasm_js_var element,va_list ar
 ReactElement private_ReactcreateElement(const char *element,...){
     va_list args;
     va_start(args, element);
-    ReactElement created_element = private_ReactcreateElement_by_varg(c2wasm_create_string(element),args);
+    ReactElement created_element;
+    if(element == ReactFragment){
+        created_element = private_ReactcreateElement_by_varg(private_ReactFragment_object,args);
+    }
+
+    else{
+        created_element = private_ReactcreateElement_by_varg(c2wasm_create_string(element),args);
+    }
     va_end(args);
     return created_element;
 }
@@ -96,7 +104,7 @@ ReactElement private_ReactcreateElement(const char *element,...){
 ReactElement private_ReactCreateFragment(c2wasm_js_var sentinel,...){
     va_list args;
     va_start(args, sentinel);
-    ReactElement element = private_ReactcreateElement_by_varg(private_ReactFragment,args);
+    ReactElement element = private_ReactcreateElement_by_varg(private_ReactFragment_object,args);
     va_end(args);
     return element;
 }

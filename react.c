@@ -108,7 +108,12 @@ c2wasm_js_var ReactGetElementByClassName(const char *className){
     c2wasm_append_array_string(arguments,className);
     return c2wasm_call_object_prop(c2wasm_document,"getElementsByClassName",arguments);
 }
-
+c2wasm_js_var ReactCreateString(const char *string){
+    return c2wasm_create_string(string);
+}
+c2wasm_js_var ReactCreateNumber(double number){
+    return c2wasm_create_double(number);
+}
 
 
 ReactRoot ReactDOMCreateRoot(c2wasm_js_var element){

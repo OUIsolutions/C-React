@@ -19,7 +19,6 @@ Key benefits include:
 - **Familiar C syntax** for frontend development
 - **Near-native performance** through WebAssembly compilation
 - **Small bundle sizes** compared to typical JavaScript frameworks
-- **Memory safety** with the option to use C's memory management
 - **Direct access to React APIs** with C-style function calls
 
 ## 🔧 Installation

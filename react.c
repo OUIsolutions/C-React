@@ -23,8 +23,6 @@ c2wasm_js_var ReactFragment;
 c2wasm_js_var React;
 c2wasm_js_var ReactDOM;
 
-void ReactStart();
-
 
 
 //================================Definitions==================================
@@ -75,6 +73,12 @@ c2wasm_js_var ReactGetElementById(const char *id){
     c2wasm_append_array_string(arguments,id);
     return c2wasm_call_object_prop(c2wasm_document,"getElementById",arguments);
 }
+c2wasm_js_var ReactGetElementByClassName(const char *className){
+    c2wasm_js_var arguments = c2wasm_create_array();
+    c2wasm_append_array_string(arguments,className);
+    return c2wasm_call_object_prop(c2wasm_document,"getElementsByClassName",arguments);
+}
+
 
 
 ReactRoot ReactDOMCreateRoot(c2wasm_js_var element){

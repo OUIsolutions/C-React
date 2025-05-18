@@ -18,8 +18,8 @@ Alternatively, you can use our [quick install setup](https://github.com/mateusmo
 
 Download the  [c2wasm.c](https://github.com/OUIsolutions/C2Wasm/releases/download/0.4.0/c2wasm.c) from [c2wasm Repo](https://github.com/OUIsolutions/C2Wasm) on version **0.4.0** to your project, and save it in your project directory.
 
-### Step 3: Add [react.c]() to your project 
-Download the [react.c]() from this repository to your project, and save it in your project directory.
+### Step 3: Add [react.c](https://github.com/mateusmoutinho/C-React/releases/download/0.0.1/react.c) to your project 
+Download the [react.c](https://github.com/mateusmoutinho/C-React/releases/download/0.0.1/react.c) from this repository to your project, and save it in your project directory.
 
 
 

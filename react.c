@@ -17,9 +17,10 @@ typedef c2wasm_js_var ReactComponent;
 
 c2wasm_js_var ReactFragment;
 c2wasm_js_var React;
-void cwasm_start();
 
-void cwasm_start(){
+void ReactStart();
+
+void ReactStart(){
     React = c2wasm_get_object_prop_any(c2wasm_window,"React");
     ReactFragment = c2wasm_get_object_prop_any(React,"Fragment");    
 }

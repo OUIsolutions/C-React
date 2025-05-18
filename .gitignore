@@ -2,6 +2,8 @@
 *.d
 index.html
 test.c
+test.js
+test.wasm
 c2wasm.c
 # Object files
 *.o

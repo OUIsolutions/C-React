@@ -39,7 +39,6 @@ For more information, please refer to <https://unlicense.org>
 */
 #include <stdarg.h>
 
-
 #ifndef c2wasm_fdefine
 #include "c2wasm.c"
 #endif 
@@ -59,7 +58,12 @@ const char *ReactFragment = "";
 #define ReactCreateElement(...) private_ReactcreateElement(__VA_ARGS__,-1)
 #define ReactCreateFragment(...) private_ReactcreateFragment(__VA_ARGS__,-1)
 
-//================================Definitions==================================
+
+#define ReactCreateProps(...)  private_ReactCreateProps(((void*)0),__VA_ARGS__,((void*)0))
+#define ReactCreateClojure(...) private_ReacteCreateFunction(__VA_ARGS__,-1)
+
+
+//================================Definiprivate_ReactcreatePropstions==================================
 
 void ReactStart(){
     c2wasm_start();
@@ -111,6 +115,38 @@ ReactElement private_ReactcreateFragment(c2wasm_js_var sentinel,...){
     return created_element;
 }
 
+c2wasm_js_var private_ReactCreateProps(void *sentinel,...){
+
+    va_list args;
+    va_start(args,sentinel);
+    
+    c2wasm_js_var created_object = c2wasm_create_object();
+
+    const short GETTING_KEY = 0;
+    const short GETTING_VALUE = 1;
+    short state = GETTING_KEY;
+    const void *NULL_PTR = ((void*)0);
+    char *last_key;
+    while(true){
+
+        if(state == GETTING_KEY){
+            last_key = va_arg(args, char*);
+            if(last_key == NULL_PTR){
+                break;
+            }
+            state = GETTING_VALUE;
+        }
+
+        if(state == GETTING_VALUE){
+            c2wasm_js_var value = va_arg(args, c2wasm_js_var);
+            c2wasm_set_object_prop_any(created_object,last_key,value);
+            state = GETTING_KEY;
+        }
+    }
+
+    va_end(args);
+    return created_object;
+}
 
 
 c2wasm_js_var ReactGetElementById(const char *id){
@@ -126,6 +162,26 @@ c2wasm_js_var ReactGetElementByClassName(const char *className){
 c2wasm_js_var ReactCreateString(const char *string){
     return c2wasm_create_string(string);
 }
+c2wasm_js_var private_ReacteCreateFunction(c2wasm_js_var (*callback)(c2wasm_js_var args),...){
+
+    va_list args;
+    va_start(args,callback);
+    c2wasm_js_var arguments = c2wasm_create_array();
+    while(1){
+        c2wasm_js_var arg = va_arg(args, c2wasm_js_var);
+        if(arg == -1){
+            break;
+        }
+        c2wasm_append_array_any(arguments,arg);
+    }
+    
+    c2wasm_js_var created_function = c2wasm_create_function_with_internal_args(arguments,callback);
+    va_end(args);
+    return created_function;
+
+}
+
+
 c2wasm_js_var ReactCreateNumber(double number){
     return c2wasm_create_double(number);
 }

@@ -53,7 +53,7 @@ c2wasm_js_var ReactFragment;
 c2wasm_js_var React;
 c2wasm_js_var ReactDOM;
 
-
+#define ReactCreateElement(...) private_ReactcreateElement(__VA_ARGS__,-1)
 
 //================================Definitions==================================
 

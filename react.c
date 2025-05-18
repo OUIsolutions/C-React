@@ -57,6 +57,7 @@ const char *ReactFragment = "";
 
 
 #define ReactCreateElement(...) private_ReactcreateElement(__VA_ARGS__,-1)
+#define ReactCreateFragment(...) private_ReactcreateFragment(__VA_ARGS__,-1)
 
 //================================Definitions==================================
 
@@ -78,6 +79,25 @@ ReactElement private_ReactcreateElement(const char *element,...){
     else{
         c2wasm_append_array_string(arguments,element);
     }
+
+    while(1){
+        c2wasm_js_var arg = va_arg(args, c2wasm_js_var);
+        if(arg == -1){
+            break;
+        }
+        c2wasm_append_array_any(arguments,arg);
+    }
+    ReactElement created_element = c2wasm_call_object_prop(React,"createElement",arguments);
+    va_end(args);
+    return created_element;
+}
+ReactElement private_ReactcreateFragment(c2wasm_js_var sentinel,...){
+    va_list args;
+    va_start(args,sentinel);
+    c2wasm_js_var arguments = c2wasm_create_array();
+    c2wasm_append_array_any(arguments,private_ReactFragment_object);
+    c2wasm_append_array_any(arguments,c2wasm_null);
+    c2wasm_append_array_any(arguments,sentinel);
 
     while(1){
         c2wasm_js_var arg = va_arg(args, c2wasm_js_var);

@@ -137,11 +137,6 @@ Compile the C code to WebAssembly using Emscripten:
 emcc app.c -o app.js
 ```
 
-For optimized production builds, add optimization flags:
-
-```bash
-emcc app.c -O3 -o app.js
-```
 
 ### Step 3: Create an HTML File
 

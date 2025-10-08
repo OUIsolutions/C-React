@@ -272,6 +272,43 @@ c2wasm_js_var ReactCreateInputHandler(
     );
 }
 
+c2wasm_js_var privateReactClickHandlerWithArgs_js_function(c2wasm_js_var args){
+    void (*click_handler)(void *ctx) = (void (*)(void *))c2wasm_get_array_long_by_index(args,0);
+    void *ctx = (void*)c2wasm_get_array_long_by_index(args,1);
+
+    click_handler(ctx);
+
+    return c2wasm_undefined;
+}
+
+c2wasm_js_var privateReactClickHandler_js_function(c2wasm_js_var args){
+    void (*click_handler)(void) = (void (*)(void))c2wasm_get_array_long_by_index(args,0);
+
+    click_handler();
+
+    return c2wasm_undefined;
+}
+
+c2wasm_js_var ReactCreateClickHandlerWithArgs(
+    void (*click_handler)(void *ctx),
+    void *ctx
+){
+    return ReactCreateClojure(
+        privateReactClickHandlerWithArgs_js_function,
+        c2wasm_create_long((long)click_handler),
+        c2wasm_create_long((long)ctx)
+    );
+}
+
+c2wasm_js_var ReactCreateClickHandler(
+    void (*click_handler)(void)
+){
+    return ReactCreateClojure(
+        privateReactClickHandler_js_function,
+        c2wasm_create_long((long)click_handler)
+    );
+}
+
 
 
 c2wasm_js_var ReactCreateNumber(double number){

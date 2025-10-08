@@ -241,7 +241,7 @@ c2wasm_js_var privateReactInputHandler_js_function(c2wasm_js_var args){
 
     char *input_text = malloc( (size + 2) * sizeof(char));
     c2wasm_memcpy_string(value,0,input_text,size);
-    
+    input_text[size] = '\0';
     input_handler(input_text);
     free(input_text);
 

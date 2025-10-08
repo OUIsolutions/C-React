@@ -272,6 +272,69 @@ c2wasm_js_var ReactCreateInputHandler(
     );
 }
 
+c2wasm_js_var privateReactOptionHandlerWithArgs_js_function(c2wasm_js_var args){
+    void (*option_handler)(const char *selected_value,void *ctx) = (void (*)(const char *,void *) )c2wasm_get_array_long_by_index(args,0);
+    void *ctx = (void*)c2wasm_get_array_long_by_index(args,1);
+
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments,0);
+    c2wasm_js_var select = c2wasm_get_object_prop_any(event,"target");
+    c2wasm_js_var value = c2wasm_get_object_prop_any(select,"value");
+
+    long size = c2wasm_get_string_len(value);
+
+    char *selected_text = malloc( (size + 2) * sizeof(char));
+    c2wasm_memcpy_string(value,0,selected_text,size);
+    selected_text[size] = '\0';
+
+    option_handler(selected_text,ctx);
+    free(selected_text);
+
+    return c2wasm_undefined;
+}
+
+
+c2wasm_js_var privateReactOptionHandler_js_function(c2wasm_js_var args){
+
+    void (*option_handler)(const char *selected_value) = (void (*)(const char *) )c2wasm_get_array_long_by_index(args,0);
+
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments,0);
+    c2wasm_js_var select = c2wasm_get_object_prop_any(event,"target");
+    c2wasm_js_var value = c2wasm_get_object_prop_any(select,"value");
+
+    long size = c2wasm_get_string_len(value);
+
+    char *selected_text = malloc( (size + 2) * sizeof(char));
+    c2wasm_memcpy_string(value,0,selected_text,size);
+    selected_text[size] = '\0';
+    option_handler(selected_text);
+    free(selected_text);
+
+    return c2wasm_undefined;
+}
+
+
+c2wasm_js_var ReactCreateOptionHandlerWithArgs(
+    void (*option_handler)(const char *selected_value,void *ctx),
+    void *ctx
+){
+    return ReactCreateClojure(
+        privateReactOptionHandlerWithArgs_js_function,
+        c2wasm_create_long((long)option_handler),
+        c2wasm_create_long((long)ctx)
+    );
+}
+
+
+
+c2wasm_js_var ReactCreateOptionHandler(
+    void (*option_handler)(const char *selected_value)
+){
+    return ReactCreateClojure(
+        privateReactOptionHandler_js_function,
+        c2wasm_create_long((long)option_handler)
+    );
+}
+
 c2wasm_js_var privateReactClickHandlerWithArgs_js_function(c2wasm_js_var args){
     void (*click_handler)(void *ctx) = (void (*)(void *))c2wasm_get_array_long_by_index(args,0);
     void *ctx = (void*)c2wasm_get_array_long_by_index(args,1);

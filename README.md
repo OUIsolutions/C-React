@@ -103,14 +103,15 @@ Create a new file called `app.c` in your folder and copy this code:
 #include <stdio.h>
 #include "c2wasm.c"
 #include "react.c"
+ReactRoot root;
 
 c2wasm_js_var handleClick(c2wasm_js_var args) {
   c2wasm_call_object_prop(c2wasm_window, "alert", args);
   return c2wasm_null;
 }
 
-ReactComponent createAppComponent() {
-  return ReactCreateElement(
+void rootRender() {
+  ReactComponent main_component = ReactCreateElement(
     "div",
     ReactCreateProps(
       "className", ReactCreateString("container"),
@@ -120,7 +121,7 @@ ReactComponent createAppComponent() {
         "margin", ReactCreateString("0 auto")
       )
     ),
-    
+
     ReactCreateElement("h1",
       ReactCreateProps(
         "style", ReactCreateProps(
@@ -131,16 +132,16 @@ ReactComponent createAppComponent() {
       ),
       ReactCreateString("🎉 Welcome to my react in C")
     ),
-    
+
     ReactCreateFragment(
       ReactCreateElement("p", ReactNULL,
         ReactCreateString("🔥 This webpage is made with C code!")
       ),
-      
+
       ReactCreateElement("p", ReactNULL,
         ReactCreateString("✨ Your C code runs super fast in the browser!")
       ),
-      
+
       ReactCreateElement(
         "button",
         ReactCreateProps(
@@ -163,13 +164,13 @@ ReactComponent createAppComponent() {
       )
     )
   );
+  ReactRootRender(root, main_component);
 }
 
 int main() {
   ReactStart();
-  ReactComponent app = createAppComponent();
-  ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-  ReactRootRender(root, app);
+  root = ReactDOMCreateRoot(ReactGetElementById("root"));
+  rootRender();
   return 0;
 }
 ```
@@ -182,9 +183,10 @@ int main() {
 ### Understanding the Key Parts:
 
 1. **`#include` lines**: Import the special files we downloaded
-2. **`handleClick` function**: Runs when button is clicked (like onclick in HTML)
-3. **`createAppComponent` function**: Builds our webpage structure
-4. **`main` function**: The starting point that puts everything together
+2. **`ReactRoot root`**: Global variable to store the React root (needed for re-rendering)
+3. **`handleClick` function**: Runs when button is clicked (like onclick in HTML)
+4. **`rootRender` function**: Builds and renders our webpage structure
+5. **`main` function**: The starting point that initializes React and creates the root
 
 
 ---
@@ -396,10 +398,9 @@ ReactStart(); // This must be the first React function you call
 
 **2. ReactCreateElement()** - Creates webpage elements
 ```c
-// Pattern: ReactCreateElement("tag", properties, children..., -1)
-ReactCreateElement("div", ReactNULL, 
-    ReactCreateString("Hello World!"), 
-    -1  // This -1 is VERY important - it marks the end!
+// Pattern: ReactCreateElement("tag", properties, children...)
+ReactCreateElement("div", ReactNULL,
+    ReactCreateString("Hello World!")
 );
 ```
 
@@ -408,66 +409,64 @@ ReactCreateElement("div", ReactNULL,
 ReactCreateString("This text will appear on the webpage")
 ```
 
-**4. ReactCreateProps()** - Sets element properties  
+**4. ReactCreateProps()** - Sets element properties
 ```c
 ReactCreateProps(
     "style", ReactCreateProps(
         "color", ReactCreateString("red"),
-        "fontSize", ReactCreateString("20px"),
-        NULL  // NULL marks the end of nested properties
-    ),
-    NULL  // NULL marks the end of main properties
+        "fontSize", ReactCreateString("20px")
+    )
 )
 ```
 
 ### 🎯 Important Rules to Remember:
 
-1. **Always end with terminators:**
-   - Use `-1` for `ReactCreateElement()` and `ReactCreateFragment()`
-   - Use `NULL` for `ReactCreateProps()`
+1. **Use the rootRender pattern:**
+   - Store `ReactRoot root` as a global variable
+   - Create a `void rootRender()` function that builds and renders your UI
+   - Call `rootRender()` from event handlers to update the UI
 
 2. **Always call `ReactStart()` first:**
    ```c
    int main() {
        ReactStart(); // Must be first!
-       // ... rest of your code
+       root = ReactDOMCreateRoot(ReactGetElementById("root"));
+       rootRender();
    }
    ```
 
 3. **Text must be wrapped:**
    ```c
    // ❌ Wrong:
-   ReactCreateElement("p", ReactNULL, "Hello", -1);
-   
+   ReactCreateElement("p", ReactNULL, "Hello");
+
    // ✅ Correct:
-   ReactCreateElement("p", ReactNULL, ReactCreateString("Hello"), -1);
+   ReactCreateElement("p", ReactNULL, ReactCreateString("Hello"));
    ```
 
 ### 🎨 Common HTML Elements You Can Use:
 
 ```c
 // Headers
-ReactCreateElement("h1", ReactNULL, ReactCreateString("Big Title"), -1);
-ReactCreateElement("h2", ReactNULL, ReactCreateString("Smaller Title"), -1);
+ReactCreateElement("h1", ReactNULL, ReactCreateString("Big Title"));
+ReactCreateElement("h2", ReactNULL, ReactCreateString("Smaller Title"));
 
 // Paragraphs
-ReactCreateElement("p", ReactNULL, ReactCreateString("Some text"), -1);
+ReactCreateElement("p", ReactNULL, ReactCreateString("Some text"));
 
 // Buttons
-ReactCreateElement("button", 
-    ReactCreateProps("onClick", some_function, NULL),
-    ReactCreateString("Click me!"), 
-    -1
+ReactCreateElement("button",
+    ReactCreateProps("onClick", some_function),
+    ReactCreateString("Click me!")
 );
 
 // Containers
-ReactCreateElement("div", ReactNULL, /* other elements */, -1);
+ReactCreateElement("div", ReactNULL, /* other elements */);
 
 // Links
-ReactCreateElement("a", 
-    ReactCreateProps("href", ReactCreateString("https://google.com"), NULL),
-    ReactCreateString("Visit Google"), 
-    -1
+ReactCreateElement("a",
+    ReactCreateProps("href", ReactCreateString("https://google.com")),
+    ReactCreateString("Visit Google")
 );
 ```
 
@@ -483,6 +482,7 @@ ReactCreateElement("a",
 #include <stdio.h>
 #include "c2wasm.c"
 #include "react.c"
+ReactRoot root;
 
 // Global variable to store the count
 static int counter = 0;
@@ -490,47 +490,39 @@ static int counter = 0;
 // Function that runs when button is clicked
 c2wasm_js_var incrementCounter(c2wasm_js_var args) {
     counter++;  // Add 1 to counter
-    
-    // Update the webpage with new counter value
-    ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-    ReactRootRender(root, createCounterApp());
-    
+    rootRender();  // Re-render with new counter value
     return c2wasm_null;
 }
 
-// Create the counter webpage
-ReactComponent createCounterApp() {
-    return ReactCreateElement("div",
+// Create and render the counter webpage
+void rootRender() {
+    ReactComponent main_component = ReactCreateElement("div",
         ReactCreateProps(
             "style", ReactCreateProps(
                 "textAlign", ReactCreateString("center"),
                 "padding", ReactCreateString("50px"),
-                "fontFamily", ReactCreateString("Arial, sans-serif"),
-                NULL
-            ),
-            NULL
+                "fontFamily", ReactCreateString("Arial, sans-serif")
+            )
         ),
-        
-        ReactCreateElement("h1", ReactNULL, 
-            ReactCreateString("🔢 Simple Counter"), -1),
-        
-        ReactCreateElement("p", 
+
+        ReactCreateElement("h1", ReactNULL,
+            ReactCreateString("🔢 Simple Counter")
+        ),
+
+        ReactCreateElement("p",
             ReactCreateProps(
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("24px"),
-                    "margin", ReactCreateString("20px"),
-                    NULL
-                ),
-                NULL
+                    "margin", ReactCreateString("20px")
+                )
             ),
-            ReactCreateString("Count: "), 
-            ReactCreateNumber(counter),  // Show the current count
-            -1
+            ReactCreateString("Count: "),
+            ReactCreateNumber(counter)  // Show the current count
         ),
-        
+
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(incrementCounter, -1),
+                "onClick", ReactCreateClojure(incrementCounter),
                 "style", ReactCreateProps(
                     "padding", ReactCreateString("15px 30px"),
                     "fontSize", ReactCreateString("18px"),
@@ -538,22 +530,19 @@ ReactComponent createCounterApp() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("➕ Click to Count!"),
-            -1
-        ),
-        -1
+            ReactCreateString("➕ Click to Count!")
+        )
     );
+    ReactRootRender(root, main_component);
 }
 
 int main() {
     ReactStart();
-    ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-    ReactRootRender(root, createCounterApp());
+    root = ReactDOMCreateRoot(ReactGetElementById("root"));
+    rootRender();
     return 0;
 }
 ```
@@ -566,6 +555,7 @@ int main() {
 #include <stdio.h>
 #include "c2wasm.c"
 #include "react.c"
+ReactRoot root;
 
 // Current background color
 static char current_color[20] = "#ffffff";  // Start with white
@@ -573,55 +563,48 @@ static char current_color[20] = "#ffffff";  // Start with white
 // Function to change color to red
 c2wasm_js_var changeToRed(c2wasm_js_var args) {
     sprintf(current_color, "#ff6b6b");  // Red color
-    
-    // Update the page
-    ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-    ReactRootRender(root, createColorApp());
+    rootRender();  // Re-render with new color
     return c2wasm_null;
 }
 
-// Function to change color to blue  
+// Function to change color to blue
 c2wasm_js_var changeToBlue(c2wasm_js_var args) {
     sprintf(current_color, "#74c0fc");  // Blue color
-    
-    ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-    ReactRootRender(root, createColorApp());
+    rootRender();  // Re-render with new color
     return c2wasm_null;
 }
 
 // Function to change color to green
 c2wasm_js_var changeToGreen(c2wasm_js_var args) {
     sprintf(current_color, "#51cf66");  // Green color
-    
-    ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-    ReactRootRender(root, createColorApp());
+    rootRender();  // Re-render with new color
     return c2wasm_null;
 }
 
-ReactComponent createColorApp() {
-    return ReactCreateElement("div",
+void rootRender() {
+    ReactComponent main_component = ReactCreateElement("div",
         ReactCreateProps(
             "style", ReactCreateProps(
                 "backgroundColor", ReactCreateString(current_color),
                 "minHeight", ReactCreateString("100vh"),
                 "padding", ReactCreateString("50px"),
                 "textAlign", ReactCreateString("center"),
-                "transition", ReactCreateString("background-color 0.3s ease"),
-                NULL
-            ),
-            NULL
+                "transition", ReactCreateString("background-color 0.3s ease")
+            )
         ),
-        
-        ReactCreateElement("h1", ReactNULL, 
-            ReactCreateString("🎨 Color Changer"), -1),
-            
+
+        ReactCreateElement("h1", ReactNULL,
+            ReactCreateString("🎨 Color Changer")
+        ),
+
         ReactCreateElement("p", ReactNULL,
-            ReactCreateString("Click the buttons to change the background color!"), -1),
-        
+            ReactCreateString("Click the buttons to change the background color!")
+        ),
+
         // Red button
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(changeToRed, -1),
+                "onClick", ReactCreateClojure(changeToRed),
                 "style", ReactCreateProps(
                     "margin", ReactCreateString("10px"),
                     "padding", ReactCreateString("10px 20px"),
@@ -629,19 +612,16 @@ ReactComponent createColorApp() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("🔴 Red"),
-            -1
+            ReactCreateString("🔴 Red")
         ),
-        
-        // Blue button  
+
+        // Blue button
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(changeToBlue, -1),
+                "onClick", ReactCreateClojure(changeToBlue),
                 "style", ReactCreateProps(
                     "margin", ReactCreateString("10px"),
                     "padding", ReactCreateString("10px 20px"),
@@ -649,19 +629,16 @@ ReactComponent createColorApp() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("🔵 Blue"),
-            -1
+            ReactCreateString("🔵 Blue")
         ),
-        
+
         // Green button
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(changeToGreen, -1),
+                "onClick", ReactCreateClojure(changeToGreen),
                 "style", ReactCreateProps(
                     "margin", ReactCreateString("10px"),
                     "padding", ReactCreateString("10px 20px"),
@@ -669,22 +646,19 @@ ReactComponent createColorApp() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("🟢 Green"),
-            -1
-        ),
-        -1
+            ReactCreateString("🟢 Green")
+        )
     );
+    ReactRootRender(root, main_component);
 }
 
 int main() {
     ReactStart();
-    ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
-    ReactRootRender(root, createColorApp());
+    root = ReactDOMCreateRoot(ReactGetElementById("root"));
+    rootRender();
     return 0;
 }
 ```
@@ -740,20 +714,20 @@ void ReactStart()                    // Always call first!
 
 ### Element Creation:
 ```c
-ReactElement ReactCreateElement(const char *tag, ..., -1)  // Create HTML elements  
-ReactElement ReactCreateFragment(..., -1)                 // Group elements
-c2wasm_js_var ReactCreateString(const char *text)        // Create text
-c2wasm_js_var ReactCreateNumber(double number)           // Create numbers
+ReactElement ReactCreateElement(const char *tag, ...)  // Create HTML elements
+ReactElement ReactCreateFragment(...)                  // Group elements
+c2wasm_js_var ReactCreateString(const char *text)     // Create text
+c2wasm_js_var ReactCreateNumber(double number)        // Create numbers
 ```
 
 ### Properties & Styling:
 ```c
-c2wasm_js_var ReactCreateProps(const char *key, value, ..., NULL)  // Set properties
+c2wasm_js_var ReactCreateProps(const char *key, value, ...)  // Set properties
 ```
 
 ### Event Handling:
-```c  
-c2wasm_js_var ReactCreateClojure(callback_function, ..., -1)  // Handle clicks, etc.
+```c
+c2wasm_js_var ReactCreateClojure(callback_function, ...)  // Handle clicks, etc.
 ```
 
 ### DOM Operations:

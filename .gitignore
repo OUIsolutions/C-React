@@ -4,6 +4,7 @@ index.html
 test.c
 test.js
 test.wasm
+app.c
 .vscode
 c2wasm.c
 # Object files

@@ -564,6 +564,7 @@ int main() {
 #include "c2wasm.c"
 #include "react.c"
 ReactRoot root;
+void rootRender();
 
 // Current background color
 static char current_color[20] = "#ffffff";  // Start with white

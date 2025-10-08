@@ -104,10 +104,13 @@ Create a new file called `app.c` in your folder and copy this code:
 #include "c2wasm.c"
 #include "react.c"
 ReactRoot root;
+void rootRender();
 
-c2wasm_js_var handleClick(c2wasm_js_var args) {
+// Simple click handler - no arguments needed!
+void handleClick() {
+  c2wasm_js_var args = c2wasm_create_array();
+  c2wasm_append_array_string(args, "🎊 Hello from C-React! You clicked a button made with C code!");
   c2wasm_call_object_prop(c2wasm_window, "alert", args);
-  return c2wasm_null;
 }
 
 void rootRender() {
@@ -118,8 +121,10 @@ void rootRender() {
       "style", ReactCreateProps(
         "padding", ReactCreateString("20px"),
         "maxWidth", ReactCreateString("800px"),
-        "margin", ReactCreateString("0 auto")
-      )
+        "margin", ReactCreateString("0 auto"),
+        NULL
+      ),
+      NULL
     ),
 
     ReactCreateElement("h1",
@@ -127,28 +132,30 @@ void rootRender() {
         "style", ReactCreateProps(
           "color", ReactCreateString("#333"),
           "borderBottom", ReactCreateString("2px solid #eee"),
-          "paddingBottom", ReactCreateString("10px")
-        )
+          "paddingBottom", ReactCreateString("10px"),
+          NULL
+        ),
+        NULL
       ),
-      ReactCreateString("🎉 Welcome to my react in C")
+      ReactCreateString("🎉 Welcome to my react in C"),
+      -1
     ),
 
     ReactCreateFragment(
       ReactCreateElement("p", ReactNULL,
-        ReactCreateString("🔥 This webpage is made with C code!")
+        ReactCreateString("🔥 This webpage is made with C code!"),
+        -1
       ),
 
       ReactCreateElement("p", ReactNULL,
-        ReactCreateString("✨ Your C code runs super fast in the browser!")
+        ReactCreateString("✨ Your C code runs super fast in the browser!"),
+        -1
       ),
 
       ReactCreateElement(
         "button",
         ReactCreateProps(
-          "onClick", ReactCreateClojure(
-            handleClick,
-            ReactCreateString("🎊 Hello from C-React! You clicked a button made with C code!")
-          ),
+          "onClick", ReactCreateClickHandler(handleClick),
           "style", ReactCreateProps(
             "padding", ReactCreateString("12px 20px"),
             "backgroundColor", ReactCreateString("#0d6efd"),
@@ -157,12 +164,17 @@ void rootRender() {
             "borderRadius", ReactCreateString("5px"),
             "cursor", ReactCreateString("pointer"),
             "fontSize", ReactCreateString("16px"),
-            "marginTop", ReactCreateString("20px")
-          )
+            "marginTop", ReactCreateString("20px"),
+            NULL
+          ),
+          NULL
         ),
-        ReactCreateString("🚀 Click Me!")
-      )
-    )
+        ReactCreateString("🚀 Click Me!"),
+        -1
+      ),
+      -1
+    ),
+    -1
   );
   ReactRootRender(root, main_component);
 }
@@ -184,9 +196,17 @@ int main() {
 
 1. **`#include` lines**: Import the special files we downloaded
 2. **`ReactRoot root`**: Global variable to store the React root (needed for re-rendering)
-3. **`handleClick` function**: Runs when button is clicked (like onclick in HTML)
-4. **`rootRender` function**: Builds and renders our webpage structure
-5. **`main` function**: The starting point that initializes React and creates the root
+3. **`void handleClick()`**: Simple function that runs when button is clicked - no complex arguments!
+4. **`ReactCreateClickHandler(handleClick)`**: Converts your C function into a button click handler
+5. **`rootRender` function**: Builds and renders our webpage structure
+6. **`main` function**: The starting point that initializes React and creates the root
+
+### 🎯 Notice the Simple Pattern:
+
+Instead of complex event handling, we use **`ReactCreateClickHandler()`** which:
+- Takes a simple `void functionName()` with no parameters
+- Automatically handles all the browser event plumbing
+- Makes your code clean and easy to read!
 
 
 ---
@@ -488,11 +508,10 @@ void rootRender();
 // Global variable to store the count
 static int counter = 0;
 
-// Function that runs when button is clicked
-c2wasm_js_var incrementCounter(c2wasm_js_var args) {
+// Simple function that runs when button is clicked - no complex arguments!
+void incrementCounter() {
     counter++;  // Add 1 to counter
     rootRender();  // Re-render with new counter value
-    return c2wasm_null;
 }
 
 // Create and render the counter webpage
@@ -502,28 +521,34 @@ void rootRender() {
             "style", ReactCreateProps(
                 "textAlign", ReactCreateString("center"),
                 "padding", ReactCreateString("50px"),
-                "fontFamily", ReactCreateString("Arial, sans-serif")
-            )
+                "fontFamily", ReactCreateString("Arial, sans-serif"),
+                NULL
+            ),
+            NULL
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("🔢 Simple Counter")
+            ReactCreateString("🔢 Simple Counter"),
+            -1
         ),
 
         ReactCreateElement("p",
             ReactCreateProps(
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("24px"),
-                    "margin", ReactCreateString("20px")
-                )
+                    "margin", ReactCreateString("20px"),
+                    NULL
+                ),
+                NULL
             ),
             ReactCreateString("Count: "),
-            ReactCreateNumber(counter)  // Show the current count
+            ReactCreateNumber(counter),  // Show the current count
+            -1
         ),
 
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(incrementCounter),
+                "onClick", ReactCreateClickHandler(incrementCounter),
                 "style", ReactCreateProps(
                     "padding", ReactCreateString("15px 30px"),
                     "fontSize", ReactCreateString("18px"),
@@ -531,11 +556,15 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer")
-                )
+                    "cursor", ReactCreateString("pointer"),
+                    NULL
+                ),
+                NULL
             ),
-            ReactCreateString("➕ Click to Count!")
-        )
+            ReactCreateString("➕ Click to Count!"),
+            -1
+        ),
+        -1
     );
     ReactRootRender(root, main_component);
 }
@@ -561,25 +590,20 @@ ReactRoot root;
 // Current background color
 static char current_color[20] = "#ffffff";  // Start with white
 
-// Function to change color to red
-c2wasm_js_var changeToRed(c2wasm_js_var args) {
+// Simple functions to change colors - no complex arguments!
+void changeToRed() {
     sprintf(current_color, "#ff6b6b");  // Red color
     rootRender();  // Re-render with new color
-    return c2wasm_null;
 }
 
-// Function to change color to blue
-c2wasm_js_var changeToBlue(c2wasm_js_var args) {
+void changeToBlue() {
     sprintf(current_color, "#74c0fc");  // Blue color
     rootRender();  // Re-render with new color
-    return c2wasm_null;
 }
 
-// Function to change color to green
-c2wasm_js_var changeToGreen(c2wasm_js_var args) {
+void changeToGreen() {
     sprintf(current_color, "#51cf66");  // Green color
     rootRender();  // Re-render with new color
-    return c2wasm_null;
 }
 
 void rootRender() {
@@ -595,17 +619,19 @@ void rootRender() {
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("🎨 Color Changer")
+            ReactCreateString("🎨 Color Changer"),
+            -1
         ),
 
         ReactCreateElement("p", ReactNULL,
-            ReactCreateString("Click the buttons to change the background color!")
+            ReactCreateString("Click the buttons to change the background color!"),
+            -1
         ),
 
         // Red button
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(changeToRed),
+                "onClick", ReactCreateClickHandler(changeToRed),
                 "style", ReactCreateProps(
                     "margin", ReactCreateString("10px"),
                     "padding", ReactCreateString("10px 20px"),
@@ -613,16 +639,19 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer")
-                )
+                    "cursor", ReactCreateString("pointer"),
+                    NULL
+                ),
+                NULL
             ),
-            ReactCreateString("🔴 Red")
+            ReactCreateString("🔴 Red"),
+            -1
         ),
 
         // Blue button
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(changeToBlue),
+                "onClick", ReactCreateClickHandler(changeToBlue),
                 "style", ReactCreateProps(
                     "margin", ReactCreateString("10px"),
                     "padding", ReactCreateString("10px 20px"),
@@ -630,16 +659,19 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer")
-                )
+                    "cursor", ReactCreateString("pointer"),
+                    NULL
+                ),
+                NULL
             ),
-            ReactCreateString("🔵 Blue")
+            ReactCreateString("🔵 Blue"),
+            -1
         ),
 
         // Green button
         ReactCreateElement("button",
             ReactCreateProps(
-                "onClick", ReactCreateClojure(changeToGreen),
+                "onClick", ReactCreateClickHandler(changeToGreen),
                 "style", ReactCreateProps(
                     "margin", ReactCreateString("10px"),
                     "padding", ReactCreateString("10px 20px"),
@@ -647,11 +679,15 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer")
-                )
+                    "cursor", ReactCreateString("pointer"),
+                    NULL
+                ),
+                NULL
             ),
-            ReactCreateString("🟢 Green")
-        )
+            ReactCreateString("🟢 Green"),
+            -1
+        ),
+        -1
     );
     ReactRootRender(root, main_component);
 }
@@ -679,25 +715,14 @@ void rootRender();
 // Global variable to store user's name
 char user_input[100] = {0};
 
-// Function that handles input changes
-c2wasm_js_var set_input_value(c2wasm_js_var args){
-    // Get the event object (first argument)
-    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments, 0);
-    
-    // Get the input element from event.target
-    c2wasm_js_var input = c2wasm_get_object_prop_any(event, "target");
-    
-    // Get the value from the input element
-    c2wasm_js_var value = c2wasm_get_object_prop_any(input, "value");
-    
-    // Clear previous input and copy new value
-    memset(user_input, 0, sizeof(user_input));
-    c2wasm_memcpy_string(value, 0, user_input, sizeof(user_input));
-    
+// Simple function that handles input changes - C-React does the hard work!
+void set_input_value(const char *input_value) {
+    // Copy the user's input to our global variable
+    strncpy(user_input, input_value, sizeof(user_input) - 1);
+    user_input[sizeof(user_input) - 1] = '\0';  // Ensure null termination
+
     printf("User typed: %s\n", user_input);  // Debug output
     rootRender();  // Re-render to show the greeting
-    
-    return c2wasm_undefined;
 }
 
 // Function to create greeting message (only if user typed something)
@@ -735,30 +760,36 @@ void rootRender() {
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("📝 Type Your Name")
+            ReactCreateString("📝 Type Your Name"),
+            -1
         ),
 
         ReactCreateElement("p", ReactNULL,
-            ReactCreateString("Enter your name and press Tab or click outside:")
+            ReactCreateString("Enter your name and press Tab or click outside:"),
+            -1
         ),
 
         // Input field that triggers set_input_value on blur (when user leaves the field)
         ReactCreateElement("input",
             ReactCreateProps(
-                "onBlur", ReactCreateClojure(set_input_value),
+                "onBlur", ReactCreateInputHandler(set_input_value),
                 "placeholder", ReactCreateString("Type your name here..."),
                 "style", ReactCreateProps(
                     "padding", ReactCreateString("10px"),
                     "fontSize", ReactCreateString("16px"),
                     "border", ReactCreateString("2px solid #ccc"),
                     "borderRadius", ReactCreateString("5px"),
-                    "width", ReactCreateString("300px")
-                )
-            )
+                    "width", ReactCreateString("300px"),
+                    NULL
+                ),
+                NULL
+            ),
+            -1
         ),
 
         // Display greeting (only shows if user typed something)
-        user_message()
+        user_message(),
+        -1
     );
     ReactRootRender(root, main_component);
 }
@@ -773,12 +804,17 @@ int main() {
 
 **🤓 How this works:**
 1. **`user_input[100]`**: Global array to store what the user types
-2. **`onBlur` event**: Triggers when user clicks outside the input field or presses Tab
-3. **`c2wasm_get_array_any_by_index(c2wasm_arguments, 0)`**: Gets the event object
-4. **`c2wasm_get_object_prop_any(event, "target")`**: Gets the input element
-5. **`c2wasm_get_object_prop_any(input, "value")`**: Gets the text the user typed
-6. **`c2wasm_memcpy_string()`**: Copies the JavaScript string to our C char array
-7. **`user_message()`**: Helper function that returns a greeting element or nothing
+2. **`void set_input_value(const char *input_value)`**: Simple function that receives the text directly!
+3. **`ReactCreateInputHandler(set_input_value)`**: Converts your C function into an input handler
+4. **`onBlur` event**: Triggers when user clicks outside the input field or presses Tab
+5. **`strncpy()`**: Safely copies the text to our global variable
+6. **`user_message()`**: Helper function that returns a greeting element or nothing
+
+**✨ The Magic:** `ReactCreateInputHandler()` automatically:
+- Extracts the text from the input field
+- Converts it from JavaScript to a C string
+- Passes it to your simple function
+- No complex event handling needed!
 
 ### Example 4: Real-Time Input (onChange)
 
@@ -794,17 +830,13 @@ void rootRender();
 
 char live_input[100] = {0};
 
-// Function that handles every keystroke
-c2wasm_js_var handle_change(c2wasm_js_var args){
-    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments, 0);
-    c2wasm_js_var input = c2wasm_get_object_prop_any(event, "target");
-    c2wasm_js_var value = c2wasm_get_object_prop_any(input, "value");
-    
-    memset(live_input, 0, sizeof(live_input));
-    c2wasm_memcpy_string(value, 0, live_input, sizeof(live_input));
-    
+// Simple function that handles every keystroke - no complex code!
+void handle_change(const char *input_value) {
+    // Copy the user's input to our global variable
+    strncpy(live_input, input_value, sizeof(live_input) - 1);
+    live_input[sizeof(live_input) - 1] = '\0';  // Ensure null termination
+
     rootRender();  // Re-render after each keystroke
-    return c2wasm_undefined;
 }
 
 void rootRender() {
@@ -823,22 +855,26 @@ void rootRender() {
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("⚡ Real-Time Input")
+            ReactCreateString("⚡ Real-Time Input"),
+            -1
         ),
 
         // Input field with onChange (triggers on every keystroke)
         ReactCreateElement("input",
             ReactCreateProps(
-                "onChange", ReactCreateClojure(handle_change),
+                "onChange", ReactCreateInputHandler(handle_change),
                 "placeholder", ReactCreateString("Start typing..."),
                 "style", ReactCreateProps(
                     "padding", ReactCreateString("10px"),
                     "fontSize", ReactCreateString("18px"),
                     "border", ReactCreateString("2px solid #0d6efd"),
                     "borderRadius", ReactCreateString("5px"),
-                    "width", ReactCreateString("400px")
-                )
-            )
+                    "width", ReactCreateString("400px"),
+                    NULL
+                ),
+                NULL
+            ),
+            -1
         ),
 
         // Show what user is typing
@@ -847,11 +883,14 @@ void rootRender() {
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("20px"),
                     "marginTop", ReactCreateString("20px"),
-                    "color", ReactCreateString("#666")
-                )
+                    "color", ReactCreateString("#666"),
+                    NULL
+                ),
+                NULL
             ),
             ReactCreateString("You typed: "),
-            ReactCreateString(live_input[0] ? live_input : "(nothing yet)")
+            ReactCreateString(live_input[0] ? live_input : "(nothing yet)"),
+            -1
         ),
 
         // Show character count
@@ -859,11 +898,15 @@ void rootRender() {
             ReactCreateProps(
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("16px"),
-                    "color", ReactCreateString("#999")
-                )
+                    "color", ReactCreateString("#999"),
+                    NULL
+                ),
+                NULL
             ),
-            ReactCreateString(count_text)
-        )
+            ReactCreateString(count_text),
+            -1
+        ),
+        -1
     );
     ReactRootRender(root, main_component);
 }
@@ -886,8 +929,236 @@ int main() {
 **💡 Pro Tips for Input Handling:**
 - Use `onChange` for real-time feedback (like search suggestions)
 - Use `onBlur` for better performance (less re-rendering)
-- Always use `memset()` to clear the buffer before copying new data
-- Use `c2wasm_arguments` to access event data in your handler functions
+- `ReactCreateInputHandler()` makes input handling super simple!
+- Just write a function that takes `const char *` - C-React does the rest!
+
+---
+
+## 🎓 Event Handler Deep Dive
+
+**C-React provides TWO ways to handle events: Simple helpers (recommended for beginners) and advanced `ReactCreateClojure()`**
+
+### ✨ Simple Event Handlers (Recommended)
+
+C-React provides easy-to-use helper functions that handle all the complex event plumbing for you:
+
+#### 1. **ReactCreateClickHandler()** - For button clicks
+
+```c
+// Your simple function - no complex arguments!
+void myClickFunction() {
+    printf("Button was clicked!\n");
+    // Do something...
+}
+
+// Use it in a button
+ReactCreateElement("button",
+    ReactCreateProps(
+        "onClick", ReactCreateClickHandler(myClickFunction),
+        NULL
+    ),
+    ReactCreateString("Click me!"),
+    -1
+)
+```
+
+**What it does:** Converts a simple `void function()` into a React event handler.
+
+#### 2. **ReactCreateClickHandlerWithArgs()** - Click with custom data
+
+```c
+typedef struct {
+    int id;
+    char name[50];
+} ButtonData;
+
+// Your function receives custom data
+void myClickWithData(void *ctx) {
+    ButtonData *data = (ButtonData*)ctx;
+    printf("Clicked button: %s (ID: %d)\n", data->name, data->id);
+}
+
+ButtonData my_button = {.id = 42, .name = "Submit"};
+
+// Pass your data along
+ReactCreateElement("button",
+    ReactCreateProps(
+        "onClick", ReactCreateClickHandlerWithArgs(myClickWithData, &my_button),
+        NULL
+    ),
+    ReactCreateString("Click me!"),
+    -1
+)
+```
+
+**What it does:** Lets you pass custom data (any pointer) to your click handler.
+
+#### 3. **ReactCreateInputHandler()** - For text input
+
+```c
+// Your simple function receives the text directly!
+void handleUserInput(const char *text) {
+    printf("User typed: %s\n", text);
+    // Do something with the text...
+}
+
+// Use it with input fields
+ReactCreateElement("input",
+    ReactCreateProps(
+        "onChange", ReactCreateInputHandler(handleUserInput),
+        NULL
+    ),
+    -1
+)
+```
+
+**What it does:** Automatically extracts text from input fields and passes it as a C string.
+
+#### 4. **ReactCreateInputHandlerWithArgs()** - Input with custom data
+
+```c
+typedef struct {
+    char buffer[100];
+    int max_length;
+} InputContext;
+
+// Function receives both the text AND your custom data
+void handleInputWithContext(const char *text, void *ctx) {
+    InputContext *input_ctx = (InputContext*)ctx;
+    if (strlen(text) <= input_ctx->max_length) {
+        strcpy(input_ctx->buffer, text);
+    }
+}
+
+InputContext my_input = {.max_length = 50};
+
+ReactCreateElement("input",
+    ReactCreateProps(
+        "onChange", ReactCreateInputHandlerWithArgs(handleInputWithContext, &my_input),
+        NULL
+    ),
+    -1
+)
+```
+
+**What it does:** Passes both the input text AND custom context data to your handler.
+
+---
+
+### 🔥 Advanced: ReactCreateClojure()
+
+**When should you use `ReactCreateClojure()`?**
+- You need direct access to JavaScript event objects
+- You want to handle events not covered by the simple helpers
+- You need maximum control and flexibility
+- You're doing something complex or unusual
+
+**How it works:**
+
+```c
+// Your handler receives c2wasm_js_var arguments
+c2wasm_js_var myAdvancedHandler(c2wasm_js_var args) {
+    // args contains any values you passed to ReactCreateClojure()
+    // c2wasm_arguments contains the actual browser event
+
+    // Example: Get the first argument you passed
+    c2wasm_js_var my_data = c2wasm_get_array_any_by_index(args, 0);
+
+    // Example: Access the browser event
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments, 0);
+
+    // Do complex JavaScript interop...
+
+    return c2wasm_null;  // or c2wasm_undefined
+}
+
+// Use it with custom arguments
+ReactCreateElement("button",
+    ReactCreateProps(
+        "onClick", ReactCreateClojure(
+            myAdvancedHandler,
+            ReactCreateString("custom arg 1"),
+            ReactCreateNumber(42),
+            -1  // REQUIRED terminator!
+        ),
+        NULL
+    ),
+    ReactCreateString("Advanced button"),
+    -1
+)
+```
+
+**Example: Custom Alert with ReactCreateClojure()**
+
+```c
+#include <stdio.h>
+#include "c2wasm.c"
+#include "react.c"
+ReactRoot root;
+void rootRender();
+
+// Advanced handler that shows a custom alert
+c2wasm_js_var showCustomAlert(c2wasm_js_var args) {
+    // Get the message we passed (first argument)
+    c2wasm_js_var message = c2wasm_get_array_any_by_index(args, 0);
+
+    // Create arguments for window.alert()
+    c2wasm_js_var alert_args = c2wasm_create_array();
+    c2wasm_append_array_any(alert_args, message);
+
+    // Call JavaScript: window.alert(message)
+    c2wasm_call_object_prop(c2wasm_window, "alert", alert_args);
+
+    return c2wasm_null;
+}
+
+void rootRender() {
+    ReactComponent app = ReactCreateElement("div", ReactNULL,
+        ReactCreateElement("button",
+            ReactCreateProps(
+                "onClick", ReactCreateClojure(
+                    showCustomAlert,
+                    ReactCreateString("🎉 This is a custom alert!"),
+                    -1  // CRITICAL: Must end with -1
+                ),
+                NULL
+            ),
+            ReactCreateString("Show Alert"),
+            -1
+        ),
+        -1
+    );
+    ReactRootRender(root, app);
+}
+
+int main() {
+    ReactStart();
+    root = ReactDOMCreateRoot(ReactGetElementById("root"));
+    rootRender();
+    return 0;
+}
+```
+
+**Key Rules for ReactCreateClojure():**
+1. Your function must return `c2wasm_js_var`
+2. Your function receives a single `c2wasm_js_var args` parameter
+3. Access your custom arguments via `c2wasm_get_array_any_by_index(args, index)`
+4. Access browser events via `c2wasm_get_array_any_by_index(c2wasm_arguments, 0)`
+5. **MUST end the argument list with `-1`** (sentinel value)
+
+---
+
+### 📊 Quick Comparison Table
+
+| Feature | Simple Helpers | ReactCreateClojure() |
+|---------|---------------|---------------------|
+| **Difficulty** | ⭐ Beginner-friendly | ⭐⭐⭐ Advanced |
+| **Code Clarity** | Very clean | More complex |
+| **Flexibility** | Limited to common patterns | Unlimited |
+| **Use Cases** | Buttons, inputs, common events | Custom events, JS interop |
+| **Recommendation** | **Use this first!** | Only when necessary |
+
+**🎯 Best Practice:** Always start with the simple helpers (`ReactCreateClickHandler`, `ReactCreateInputHandler`, etc.). Only use `ReactCreateClojure()` when you need advanced functionality not covered by the helpers.
 
 ---
 
@@ -951,9 +1222,19 @@ c2wasm_js_var ReactCreateNumber(double number)        // Create numbers
 c2wasm_js_var ReactCreateProps(const char *key, value, ...)  // Set properties
 ```
 
-### Event Handling:
+### Event Handling (Simple - Recommended):
 ```c
-c2wasm_js_var ReactCreateClojure(callback_function, ...)  // Handle clicks, etc.
+c2wasm_js_var ReactCreateClickHandler(void (*func)())                    // Simple click handler
+c2wasm_js_var ReactCreateClickHandlerWithArgs(void (*func)(void*), ctx)  // Click with custom data
+c2wasm_js_var ReactCreateInputHandler(void (*func)(const char*))         // Simple input handler
+c2wasm_js_var ReactCreateInputHandlerWithArgs(                           // Input with custom data
+    void (*func)(const char*, void*), void *ctx
+)
+```
+
+### Event Handling (Advanced):
+```c
+c2wasm_js_var ReactCreateClojure(callback_function, ...)  // Advanced event handling
 ```
 
 ### DOM Operations:

@@ -21,7 +21,7 @@ You need to download the following files:
 
 You can download them using `curl`:
 ```bash
-curl -L -o react.c https://github.com/OUIsolutions/C-React/releases/download/0.2.0/react.c
+curl -L -o react.c https://github.com/OUIsolutions/C-React/releases/download/0.3.0/react.c
 curl -L -o c2wasm.c https://github.com/OUIsolutions/C2Wasm/releases/download/0.10.0/c2wasm.c
 ```
 

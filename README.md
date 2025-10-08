@@ -121,10 +121,8 @@ void rootRender() {
       "style", ReactCreateProps(
         "padding", ReactCreateString("20px"),
         "maxWidth", ReactCreateString("800px"),
-        "margin", ReactCreateString("0 auto"),
-        NULL
-      ),
-      NULL
+        "margin", ReactCreateString("0 auto")
+      )
     ),
 
     ReactCreateElement("h1",
@@ -132,24 +130,19 @@ void rootRender() {
         "style", ReactCreateProps(
           "color", ReactCreateString("#333"),
           "borderBottom", ReactCreateString("2px solid #eee"),
-          "paddingBottom", ReactCreateString("10px"),
-          NULL
-        ),
-        NULL
+          "paddingBottom", ReactCreateString("10px")
+        )
       ),
-      ReactCreateString("🎉 Welcome to my react in C"),
-      -1
+      ReactCreateString("🎉 Welcome to my react in C")
     ),
 
     ReactCreateFragment(
       ReactCreateElement("p", ReactNULL,
-        ReactCreateString("🔥 This webpage is made with C code!"),
-        -1
+        ReactCreateString("🔥 This webpage is made with C code!")
       ),
 
       ReactCreateElement("p", ReactNULL,
-        ReactCreateString("✨ Your C code runs super fast in the browser!"),
-        -1
+        ReactCreateString("✨ Your C code runs super fast in the browser!")
       ),
 
       ReactCreateElement(
@@ -164,17 +157,12 @@ void rootRender() {
             "borderRadius", ReactCreateString("5px"),
             "cursor", ReactCreateString("pointer"),
             "fontSize", ReactCreateString("16px"),
-            "marginTop", ReactCreateString("20px"),
-            NULL
-          ),
-          NULL
+            "marginTop", ReactCreateString("20px")
+          )
         ),
-        ReactCreateString("🚀 Click Me!"),
-        -1
-      ),
-      -1
-    ),
-    -1
+        ReactCreateString("🚀 Click Me!")
+      )
+    )
   );
   ReactRootRender(root, main_component);
 }
@@ -421,7 +409,7 @@ ReactStart(); // This must be the first React function you call
 // Pattern: ReactCreateElement("tag", properties, children...)
 ReactCreateElement("div", ReactNULL,
     ReactCreateString("Hello World!")
-);
+)
 ```
 
 **3. ReactCreateString()** - Creates text
@@ -521,29 +509,23 @@ void rootRender() {
             "style", ReactCreateProps(
                 "textAlign", ReactCreateString("center"),
                 "padding", ReactCreateString("50px"),
-                "fontFamily", ReactCreateString("Arial, sans-serif"),
-                NULL
-            ),
-            NULL
+                "fontFamily", ReactCreateString("Arial, sans-serif")
+            )
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("🔢 Simple Counter"),
-            -1
+            ReactCreateString("🔢 Simple Counter")
         ),
 
         ReactCreateElement("p",
             ReactCreateProps(
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("24px"),
-                    "margin", ReactCreateString("20px"),
-                    NULL
-                ),
-                NULL
+                    "margin", ReactCreateString("20px")
+                )
             ),
             ReactCreateString("Count: "),
-            ReactCreateNumber(counter),  // Show the current count
-            -1
+            ReactCreateNumber(counter)  // Show the current count
         ),
 
         ReactCreateElement("button",
@@ -556,15 +538,11 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("➕ Click to Count!"),
-            -1
-        ),
-        -1
+            ReactCreateString("➕ Click to Count!")
+        )
     );
     ReactRootRender(root, main_component);
 }
@@ -619,13 +597,11 @@ void rootRender() {
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("🎨 Color Changer"),
-            -1
+            ReactCreateString("🎨 Color Changer")
         ),
 
         ReactCreateElement("p", ReactNULL,
-            ReactCreateString("Click the buttons to change the background color!"),
-            -1
+            ReactCreateString("Click the buttons to change the background color!")
         ),
 
         // Red button
@@ -639,13 +615,10 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("🔴 Red"),
-            -1
+            ReactCreateString("🔴 Red")
         ),
 
         // Blue button
@@ -659,13 +632,10 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("🔵 Blue"),
-            -1
+            ReactCreateString("🔵 Blue")
         ),
 
         // Green button
@@ -679,15 +649,11 @@ void rootRender() {
                     "color", ReactCreateString("white"),
                     "border", ReactCreateString("none"),
                     "borderRadius", ReactCreateString("5px"),
-                    "cursor", ReactCreateString("pointer"),
-                    NULL
-                ),
-                NULL
+                    "cursor", ReactCreateString("pointer")
+                )
             ),
-            ReactCreateString("🟢 Green"),
-            -1
-        ),
-        -1
+            ReactCreateString("🟢 Green")
+        )
     );
     ReactRootRender(root, main_component);
 }
@@ -760,13 +726,11 @@ void rootRender() {
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("📝 Type Your Name"),
-            -1
+            ReactCreateString("📝 Type Your Name")
         ),
 
         ReactCreateElement("p", ReactNULL,
-            ReactCreateString("Enter your name and press Tab or click outside:"),
-            -1
+            ReactCreateString("Enter your name and press Tab or click outside:")
         ),
 
         // Input field that triggers set_input_value on blur (when user leaves the field)
@@ -779,17 +743,13 @@ void rootRender() {
                     "fontSize", ReactCreateString("16px"),
                     "border", ReactCreateString("2px solid #ccc"),
                     "borderRadius", ReactCreateString("5px"),
-                    "width", ReactCreateString("300px"),
-                    NULL
-                ),
-                NULL
-            ),
-            -1
+                    "width", ReactCreateString("300px")
+                )
+            )
         ),
 
         // Display greeting (only shows if user typed something)
-        user_message(),
-        -1
+        user_message()
     );
     ReactRootRender(root, main_component);
 }
@@ -844,7 +804,7 @@ void rootRender() {
     int char_count = strlen(live_input);
     char count_text[50];
     sprintf(count_text, "Characters: %d", char_count);
-    
+
     ReactComponent main_component = ReactCreateElement("div",
         ReactCreateProps(
             "style", ReactCreateProps(
@@ -855,8 +815,7 @@ void rootRender() {
         ),
 
         ReactCreateElement("h1", ReactNULL,
-            ReactCreateString("⚡ Real-Time Input"),
-            -1
+            ReactCreateString("⚡ Real-Time Input")
         ),
 
         // Input field with onChange (triggers on every keystroke)
@@ -869,12 +828,9 @@ void rootRender() {
                     "fontSize", ReactCreateString("18px"),
                     "border", ReactCreateString("2px solid #0d6efd"),
                     "borderRadius", ReactCreateString("5px"),
-                    "width", ReactCreateString("400px"),
-                    NULL
-                ),
-                NULL
-            ),
-            -1
+                    "width", ReactCreateString("400px")
+                )
+            )
         ),
 
         // Show what user is typing
@@ -883,14 +839,11 @@ void rootRender() {
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("20px"),
                     "marginTop", ReactCreateString("20px"),
-                    "color", ReactCreateString("#666"),
-                    NULL
-                ),
-                NULL
+                    "color", ReactCreateString("#666")
+                )
             ),
             ReactCreateString("You typed: "),
-            ReactCreateString(live_input[0] ? live_input : "(nothing yet)"),
-            -1
+            ReactCreateString(live_input[0] ? live_input : "(nothing yet)")
         ),
 
         // Show character count
@@ -898,15 +851,11 @@ void rootRender() {
             ReactCreateProps(
                 "style", ReactCreateProps(
                     "fontSize", ReactCreateString("16px"),
-                    "color", ReactCreateString("#999"),
-                    NULL
-                ),
-                NULL
+                    "color", ReactCreateString("#999")
+                )
             ),
-            ReactCreateString(count_text),
-            -1
-        ),
-        -1
+            ReactCreateString(count_text)
+        )
     );
     ReactRootRender(root, main_component);
 }
@@ -954,11 +903,9 @@ void myClickFunction() {
 // Use it in a button
 ReactCreateElement("button",
     ReactCreateProps(
-        "onClick", ReactCreateClickHandler(myClickFunction),
-        NULL
+        "onClick", ReactCreateClickHandler(myClickFunction)
     ),
-    ReactCreateString("Click me!"),
-    -1
+    ReactCreateString("Click me!")
 )
 ```
 
@@ -983,11 +930,9 @@ ButtonData my_button = {.id = 42, .name = "Submit"};
 // Pass your data along
 ReactCreateElement("button",
     ReactCreateProps(
-        "onClick", ReactCreateClickHandlerWithArgs(myClickWithData, &my_button),
-        NULL
+        "onClick", ReactCreateClickHandlerWithArgs(myClickWithData, &my_button)
     ),
-    ReactCreateString("Click me!"),
-    -1
+    ReactCreateString("Click me!")
 )
 ```
 
@@ -1005,10 +950,8 @@ void handleUserInput(const char *text) {
 // Use it with input fields
 ReactCreateElement("input",
     ReactCreateProps(
-        "onChange", ReactCreateInputHandler(handleUserInput),
-        NULL
-    ),
-    -1
+        "onChange", ReactCreateInputHandler(handleUserInput)
+    )
 )
 ```
 
@@ -1034,10 +977,8 @@ InputContext my_input = {.max_length = 50};
 
 ReactCreateElement("input",
     ReactCreateProps(
-        "onChange", ReactCreateInputHandlerWithArgs(handleInputWithContext, &my_input),
-        NULL
-    ),
-    -1
+        "onChange", ReactCreateInputHandlerWithArgs(handleInputWithContext, &my_input)
+    )
 )
 ```
 
@@ -1078,13 +1019,10 @@ ReactCreateElement("button",
         "onClick", ReactCreateClojure(
             myAdvancedHandler,
             ReactCreateString("custom arg 1"),
-            ReactCreateNumber(42),
-            -1  // REQUIRED terminator!
-        ),
-        NULL
+            ReactCreateNumber(42)
+        )
     ),
-    ReactCreateString("Advanced button"),
-    -1
+    ReactCreateString("Advanced button")
 )
 ```
 
@@ -1118,15 +1056,11 @@ void rootRender() {
             ReactCreateProps(
                 "onClick", ReactCreateClojure(
                     showCustomAlert,
-                    ReactCreateString("🎉 This is a custom alert!"),
-                    -1  // CRITICAL: Must end with -1
-                ),
-                NULL
+                    ReactCreateString("🎉 This is a custom alert!")
+                )
             ),
-            ReactCreateString("Show Alert"),
-            -1
-        ),
-        -1
+            ReactCreateString("Show Alert")
+        )
     );
     ReactRootRender(root, app);
 }
@@ -1144,7 +1078,6 @@ int main() {
 2. Your function receives a single `c2wasm_js_var args` parameter
 3. Access your custom arguments via `c2wasm_get_array_any_by_index(args, index)`
 4. Access browser events via `c2wasm_get_array_any_by_index(c2wasm_arguments, 0)`
-5. **MUST end the argument list with `-1`** (sentinel value)
 
 ---
 

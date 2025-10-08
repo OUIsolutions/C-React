@@ -483,6 +483,7 @@ ReactCreateElement("a",
 #include "c2wasm.c"
 #include "react.c"
 ReactRoot root;
+void rootRender();
 
 // Global variable to store the count
 static int counter = 0;

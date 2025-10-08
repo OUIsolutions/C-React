@@ -206,6 +206,34 @@ c2wasm_js_var private_ReacteCreateFunction(c2wasm_js_var (*callback)(c2wasm_js_v
 
 }
 
+c2wasm_js_var privateReactInputHandler_js_function(c2wasm_js_var args){
+    
+    
+    void (*input_handler)(const char *input_value,void *ctx) = (void (*)(const char *,void *) )c2wasm_get_array_long_by_index(args,0);
+    void *ctx = (void*)c2wasm_get_array_long_by_index(args,1);
+    void (*ctx_clear)(void *ctx) =  ( void (*)(void *))c2wasm_get_array_long_by_index(args,2);
+
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments,0);
+    c2wasm_js_var input = c2wasm_get_object_prop_any(event,"target");
+    c2wasm_js_var value = c2wasm_get_object_prop_any(input,"value");
+    
+
+
+
+    return c2wasm_undefined;
+}
+
+
+c2wasm_js_var ReactCreateInputHandlerWithArgs(void (*input_handler)(const char *input_value,void *ctx),void *ctx,void (*ctx_clear)(void *ctx)){
+
+    c2wasm_js_var args = c2wasm_create_array();
+    c2wasm_append_array_long(args,(long)input_handler);
+    c2wasm_append_array_long(args,(long)ctx);
+    c2wasm_append_array_long(args,(long)ctx_clear);
+    return ReactCreateClojure(privateReactInputHandler_js_function,args);
+}
+
+
 
 c2wasm_js_var ReactCreateNumber(double number){
     return c2wasm_create_double(number);

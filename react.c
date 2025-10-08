@@ -206,16 +206,10 @@ c2wasm_js_var private_ReacteCreateFunction(c2wasm_js_var (*callback)(c2wasm_js_v
 
 }
 
-c2wasm_js_var privateReactInputHandler_js_function(c2wasm_js_var args){
-    printf("func args: %ld",c2wasm_get_array_size(c2wasm_arguments));
-    printf("clojure args %ld",c2wasm_get_array_size(args));
-
+c2wasm_js_var privateReactInputHandlerWithArgs_js_function(c2wasm_js_var args){
     void (*input_handler)(const char *input_value,void *ctx) = (void (*)(const char *,void *) )c2wasm_get_array_long_by_index(args,0);
     void *ctx = (void*)c2wasm_get_array_long_by_index(args,1);
-    void (*ctx_clear)(void *ctx) =  ( void (*)(void *))c2wasm_get_array_long_by_index(args,2);
 
-
-    printf("input ptr: %p\n",input_handler);
     c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments,0);
     c2wasm_js_var input = c2wasm_get_object_prop_any(event,"target");
     c2wasm_js_var value = c2wasm_get_object_prop_any(input,"value");
@@ -228,27 +222,53 @@ c2wasm_js_var privateReactInputHandler_js_function(c2wasm_js_var args){
     
     input_handler(input_text,ctx);
     free(input_text);
-    if(ctx_clear && ctx){
-        ctx_clear(ctx);
-    }
 
 
     return c2wasm_undefined;
 }
 
 
-c2wasm_js_var privateReactCreateInputHandlerWithArgs(
+c2wasm_js_var privateReactInputHandler_js_function(c2wasm_js_var args){
+  
+    void (*input_handler)(const char *input_value) = (void (*)(const char *) )c2wasm_get_array_long_by_index(args,0);
+
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments,0);
+    c2wasm_js_var input = c2wasm_get_object_prop_any(event,"target");
+    c2wasm_js_var value = c2wasm_get_object_prop_any(input,"value");
+
+    long size = c2wasm_get_string_len(value);
+
+
+    char *input_text = malloc( (size + 2) * sizeof(char));
+    c2wasm_memcpy_string(value,0,input_text,size);
+    
+    input_handler(input_text);
+    free(input_text);
+
+
+    return c2wasm_undefined;
+}
+
+
+c2wasm_js_var ReactCreateInputHandlerWithArgs(
     void (*input_handler)(const char *input_value,void *ctx),
-    void *ctx,
-    void (*ctx_clear)(void *ctx)
+    void *ctx
 ){
+    return ReactCreateClojure(
+        privateReactInputHandlerWithArgs_js_function,
+        c2wasm_create_long((long)input_handler),
+        c2wasm_create_long((long)ctx)
+    );
+}
 
 
+
+c2wasm_js_var ReactCreateInputHandler(
+    void (*input_handler)(const char *input_value,void *ctx)
+){
     return ReactCreateClojure(
         privateReactInputHandler_js_function,
-        c2wasm_create_long((long)input_handler),
-        c2wasm_create_long((long)ctx),
-        c2wasm_create_long((long)ctx_clear)
+        c2wasm_create_long((long)input_handler)
     );
 }
 

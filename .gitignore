@@ -3,6 +3,8 @@
 index.html
 test.c
 test.js
+app.wasm 
+app.js
 test.wasm
 app.c
 .vscode

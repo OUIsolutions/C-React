@@ -664,6 +664,231 @@ int main() {
 }
 ```
 
+### Example 3: Text Input Handler
+
+**What it does**: Takes user input from a text field and displays a personalized greeting
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include "c2wasm.c"
+#include "react.c"
+ReactRoot root;
+void rootRender();
+
+// Global variable to store user's name
+char user_input[100] = {0};
+
+// Function that handles input changes
+c2wasm_js_var set_input_value(c2wasm_js_var args){
+    // Get the event object (first argument)
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments, 0);
+    
+    // Get the input element from event.target
+    c2wasm_js_var input = c2wasm_get_object_prop_any(event, "target");
+    
+    // Get the value from the input element
+    c2wasm_js_var value = c2wasm_get_object_prop_any(input, "value");
+    
+    // Clear previous input and copy new value
+    memset(user_input, 0, sizeof(user_input));
+    c2wasm_memcpy_string(value, 0, user_input, sizeof(user_input));
+    
+    printf("User typed: %s\n", user_input);  // Debug output
+    rootRender();  // Re-render to show the greeting
+    
+    return c2wasm_undefined;
+}
+
+// Function to create greeting message (only if user typed something)
+ReactComponent user_message(){
+    if(user_input[0] == 0){
+        return ReactNULL;  // Don't show anything if input is empty
+    }
+    
+    // Create personalized greeting
+    char user_hello[200] = {0};
+    strcat(user_hello, "Hello, ");
+    strcat(user_hello, user_input);
+    strcat(user_hello, "! 👋");
+    
+    return ReactCreateElement("h1",
+        ReactCreateProps(
+            "style", ReactCreateProps(
+                "color", ReactCreateString("#28a745"),
+                "marginTop", ReactCreateString("20px")
+            )
+        ),
+        ReactCreateString(user_hello)
+    );    
+}
+
+// Create and render the input webpage
+void rootRender() {
+    ReactComponent main_component = ReactCreateElement("div",
+        ReactCreateProps(
+            "style", ReactCreateProps(
+                "textAlign", ReactCreateString("center"),
+                "padding", ReactCreateString("50px"),
+                "fontFamily", ReactCreateString("Arial, sans-serif")
+            )
+        ),
+
+        ReactCreateElement("h1", ReactNULL,
+            ReactCreateString("📝 Type Your Name")
+        ),
+
+        ReactCreateElement("p", ReactNULL,
+            ReactCreateString("Enter your name and press Tab or click outside:")
+        ),
+
+        // Input field that triggers set_input_value on blur (when user leaves the field)
+        ReactCreateElement("input",
+            ReactCreateProps(
+                "onBlur", ReactCreateClojure(set_input_value),
+                "placeholder", ReactCreateString("Type your name here..."),
+                "style", ReactCreateProps(
+                    "padding", ReactCreateString("10px"),
+                    "fontSize", ReactCreateString("16px"),
+                    "border", ReactCreateString("2px solid #ccc"),
+                    "borderRadius", ReactCreateString("5px"),
+                    "width", ReactCreateString("300px")
+                )
+            )
+        ),
+
+        // Display greeting (only shows if user typed something)
+        user_message()
+    );
+    ReactRootRender(root, main_component);
+}
+
+int main() {
+    ReactStart();
+    root = ReactDOMCreateRoot(ReactGetElementById("root"));
+    rootRender();
+    return 0;
+}
+```
+
+**🤓 How this works:**
+1. **`user_input[100]`**: Global array to store what the user types
+2. **`onBlur` event**: Triggers when user clicks outside the input field or presses Tab
+3. **`c2wasm_get_array_any_by_index(c2wasm_arguments, 0)`**: Gets the event object
+4. **`c2wasm_get_object_prop_any(event, "target")`**: Gets the input element
+5. **`c2wasm_get_object_prop_any(input, "value")`**: Gets the text the user typed
+6. **`c2wasm_memcpy_string()`**: Copies the JavaScript string to our C char array
+7. **`user_message()`**: Helper function that returns a greeting element or nothing
+
+### Example 4: Real-Time Input (onChange)
+
+**What it does**: Updates the greeting as you type (real-time feedback)
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include "c2wasm.c"
+#include "react.c"
+ReactRoot root;
+void rootRender();
+
+char live_input[100] = {0};
+
+// Function that handles every keystroke
+c2wasm_js_var handle_change(c2wasm_js_var args){
+    c2wasm_js_var event = c2wasm_get_array_any_by_index(c2wasm_arguments, 0);
+    c2wasm_js_var input = c2wasm_get_object_prop_any(event, "target");
+    c2wasm_js_var value = c2wasm_get_object_prop_any(input, "value");
+    
+    memset(live_input, 0, sizeof(live_input));
+    c2wasm_memcpy_string(value, 0, live_input, sizeof(live_input));
+    
+    rootRender();  // Re-render after each keystroke
+    return c2wasm_undefined;
+}
+
+void rootRender() {
+    // Count the characters
+    int char_count = strlen(live_input);
+    char count_text[50];
+    sprintf(count_text, "Characters: %d", char_count);
+    
+    ReactComponent main_component = ReactCreateElement("div",
+        ReactCreateProps(
+            "style", ReactCreateProps(
+                "textAlign", ReactCreateString("center"),
+                "padding", ReactCreateString("50px"),
+                "fontFamily", ReactCreateString("Arial, sans-serif")
+            )
+        ),
+
+        ReactCreateElement("h1", ReactNULL,
+            ReactCreateString("⚡ Real-Time Input")
+        ),
+
+        // Input field with onChange (triggers on every keystroke)
+        ReactCreateElement("input",
+            ReactCreateProps(
+                "onChange", ReactCreateClojure(handle_change),
+                "placeholder", ReactCreateString("Start typing..."),
+                "style", ReactCreateProps(
+                    "padding", ReactCreateString("10px"),
+                    "fontSize", ReactCreateString("18px"),
+                    "border", ReactCreateString("2px solid #0d6efd"),
+                    "borderRadius", ReactCreateString("5px"),
+                    "width", ReactCreateString("400px")
+                )
+            )
+        ),
+
+        // Show what user is typing
+        ReactCreateElement("p",
+            ReactCreateProps(
+                "style", ReactCreateProps(
+                    "fontSize", ReactCreateString("20px"),
+                    "marginTop", ReactCreateString("20px"),
+                    "color", ReactCreateString("#666")
+                )
+            ),
+            ReactCreateString("You typed: "),
+            ReactCreateString(live_input[0] ? live_input : "(nothing yet)")
+        ),
+
+        // Show character count
+        ReactCreateElement("p",
+            ReactCreateProps(
+                "style", ReactCreateProps(
+                    "fontSize", ReactCreateString("16px"),
+                    "color", ReactCreateString("#999")
+                )
+            ),
+            ReactCreateString(count_text)
+        )
+    );
+    ReactRootRender(root, main_component);
+}
+
+int main() {
+    ReactStart();
+    root = ReactDOMCreateRoot(ReactGetElementById("root"));
+    rootRender();
+    return 0;
+}
+```
+
+**🎯 Key Differences: onChange vs onBlur**
+
+| Event | When it triggers | Use case |
+|-------|------------------|----------|
+| `onChange` | Every keystroke | Real-time validation, character counters, live search |
+| `onBlur` | User leaves field | Form validation, save data when user finishes typing |
+
+**💡 Pro Tips for Input Handling:**
+- Use `onChange` for real-time feedback (like search suggestions)
+- Use `onBlur` for better performance (less re-rendering)
+- Always use `memset()` to clear the buffer before copying new data
+- Use `c2wasm_arguments` to access event data in your handler functions
+
 ---
 
 ## 🤖 For AI Developers & Quick Reference

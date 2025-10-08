@@ -100,72 +100,55 @@ my-first-website/
 Create a new file called `app.c` in your folder and copy this code:
 
 ```c
-// Don't worry about understanding every line yet!
-// We'll explain the important parts
+#include <stdio.h>
+#include "c2wasm.c"
+#include "react.c"
 
-#include <stdio.h>           // For basic C functions
-#include "c2wasm.c"         // Magic file #1
-#include "react.c"          // Magic file #2
-
-// This function runs when someone clicks the button
 c2wasm_js_var handleClick(c2wasm_js_var args) {
-  // Show an alert box (like alert() in JavaScript)
   c2wasm_call_object_prop(c2wasm_window, "alert", args);
   return c2wasm_null;
 }
 
-// This function creates our website's content
 ReactComponent createAppComponent() {
   return ReactCreateElement(
-    "div",                    // Create a <div> container
-    ReactCreateProps(         // Set properties for our div
+    "div",
+    ReactCreateProps(
       "className", ReactCreateString("container"),
-      "style", ReactCreateProps(    // Make it look nice
+      "style", ReactCreateProps(
         "padding", ReactCreateString("20px"),
         "maxWidth", ReactCreateString("800px"),
-        "margin", ReactCreateString("0 auto"),
-        NULL                  // End of style properties
-      ),
-      NULL                    // End of div properties  
+        "margin", ReactCreateString("0 auto")
+      )
     ),
     
-    // Create a big heading
-    ReactCreateElement("h1", 
+    ReactCreateElement("h1",
       ReactCreateProps(
         "style", ReactCreateProps(
           "color", ReactCreateString("#333"),
           "borderBottom", ReactCreateString("2px solid #eee"),
-          "paddingBottom", ReactCreateString("10px"),
-          NULL
-        ),
-        NULL
-      ), 
-      ReactCreateString("🎉 Welcome to C-React!"), // The heading text
-      -1                      // End of heading children
+          "paddingBottom", ReactCreateString("10px")
+        )
+      ),
+      ReactCreateString("🎉 Welcome to my react in C")
     ),
     
-    // Create some paragraphs and a button
-    ReactCreateFragment(      // Group multiple elements
-      ReactCreateElement("p", ReactNULL, 
-        ReactCreateString("🔥 This webpage is made with C code!"),
-        -1
+    ReactCreateFragment(
+      ReactCreateElement("p", ReactNULL,
+        ReactCreateString("🔥 This webpage is made with C code!")
       ),
       
-      ReactCreateElement("p", ReactNULL, 
-        ReactCreateString("✨ Your C code runs super fast in the browser!"),
-        -1
+      ReactCreateElement("p", ReactNULL,
+        ReactCreateString("✨ Your C code runs super fast in the browser!")
       ),
       
-      // Create a clickable button
       ReactCreateElement(
         "button",
         ReactCreateProps(
-          "onClick", ReactCreateClojure(      // When clicked, run handleClick
+          "onClick", ReactCreateClojure(
             handleClick,
-            ReactCreateString("🎊 Hello from C-React! You clicked a button made with C code!"),
-            -1
+            ReactCreateString("🎊 Hello from C-React! You clicked a button made with C code!")
           ),
-          "style", ReactCreateProps(          // Make the button pretty
+          "style", ReactCreateProps(
             "padding", ReactCreateString("12px 20px"),
             "backgroundColor", ReactCreateString("#0d6efd"),
             "color", ReactCreateString("white"),
@@ -173,32 +156,20 @@ ReactComponent createAppComponent() {
             "borderRadius", ReactCreateString("5px"),
             "cursor", ReactCreateString("pointer"),
             "fontSize", ReactCreateString("16px"),
-            "marginTop", ReactCreateString("20px"),
-            NULL
-          ),
-          NULL
+            "marginTop", ReactCreateString("20px")
+          )
         ),
-        ReactCreateString("🚀 Click Me!"),   // Button text
-        -1
-      ),
-      -1                      // End of fragment children
-    ),
-    -1                        // End of main div children
+        ReactCreateString("🚀 Click Me!")
+      )
+    )
   );
 }
 
-// The main function - where everything starts!
 int main() {
-  // Step 1: Initialize React
   ReactStart();
-  
-  // Step 2: Create our website content
   ReactComponent app = createAppComponent();
-  
-  // Step 3: Put our content on the webpage
   ReactRoot root = ReactDOMCreateRoot(ReactGetElementById("root"));
   ReactRootRender(root, app);
-  
   return 0;
 }
 ```
